@@ -17,7 +17,10 @@ import time
 import asyncio
 import random
 
+vector_number = 1
 
+degrees = [-22.5, 22.5, 157.5, 202.5]
+name = ["vec_1", "vec_2", "vec_3", "vec_4"]
 # function to read data from wristband
 async def listen():
     url = 'ws://127.0.0.1:9999'
@@ -172,8 +175,8 @@ y2 = []
 
 # target vector1 -22.5; vector2 22.5;vector3 157.5;vector4 202.5
 for a in range(1000):
-    x2.append(a * 0.01 * math.sin(math.radians(202.5)))
-    y2.append(a * 0.01 * math.cos(math.radians(202.5)))
+    x2.append(a * 0.01 * math.sin(math.radians(degrees[vector_number])))
+    y2.append(a * 0.01 * math.cos(math.radians(degrees[vector_number])))
 
 x_all = np.concatenate([x1, x2])
 y_all = np.concatenate([y1, y2])
@@ -205,7 +208,7 @@ df = pd.DataFrame(data=allData,
 
 subject = "Hokin"
 # save data to .csv file
-df.to_csv('data/vector_1.csv', index=False)
+df.to_csv('data/' + name[vector_number] + '.csv', index=False)
 
 myWin.close()
 core.quit()

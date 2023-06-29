@@ -249,7 +249,7 @@ MAV_filtered = np.zeros(Nchannels)
 # pos_all = np.zeros([Npos, 2])
 # t_all = np.zeros([Npos])
 
-ofile = open("data/" + subjectnum + "/2DExperiment" + subjecttime + ".txt", "w")
+ofile = open("data/pilot_data.txt", "w")
 ofile.write("Channel Values\n")
 ofile.write("Subject: " + subjectnum + subjecttime + "\n")
 ofile.write("C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C12, C13, C14, C15, C16, targ_x, targ_y, curs_x, curs_Y, time\n")

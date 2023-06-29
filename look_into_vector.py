@@ -14,7 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
 
-df = pd.read_csv("data/vector_1.csv")
+df = pd.read_csv("data/vector_4.csv")
 X = df.iloc[501: , :16]  # MAV
 Y = df.iloc[501: , 16:18]  # target positions
 time = df.iloc[:, -1]  # time
@@ -28,6 +28,6 @@ print(X_matrix)
 mean_values = np.mean(X_matrix, axis=0)
 
 print("Mean Value", mean_values)
-np.savetxt('data/vector_1.csv', mean_values, delimiter=',')
+np.savetxt('data/vector_4.csv', mean_values, delimiter=',')
 
 # print(Y)

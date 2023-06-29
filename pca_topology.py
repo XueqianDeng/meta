@@ -16,6 +16,10 @@ import websockets
 import time
 import asyncio
 import random
+import numpy as np
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 # function to read data from wristband
@@ -171,7 +175,7 @@ x2 = []
 y2 = []
 
 # target vector1 -22.5; vector2 22.5;vector3 157.5;vector4 202.5
-for a in range(1000):
+for a in range(5000):
     x2.append(a * 0.01 * math.sin(math.radians(202.5)))
     y2.append(a * 0.01 * math.cos(math.radians(202.5)))
 
@@ -198,14 +202,61 @@ time_all = np.reshape(np.array(time_all), [-1, 1])
 MAV_all = np.array(MAV_all).T
 allData = np.concatenate([MAV_all, x, y, time_all], axis=1)
 
-# create data frame of MAV from each channel, target positions, and time
-df = pd.DataFrame(data=allData,
-                  columns=['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
-                           'C13', 'C14', 'C15', 'C16', 'x_pos', 'y_pos', 'time'])
-
-subject = "Hokin"
-# save data to .csv file
-df.to_csv('data/vector_1.csv', index=False)
-
 myWin.close()
-core.quit()
+
+data = allData
+data_abs = np.abs(data)
+Nsamples = data.shape[0]
+MAV = np.zeros([data.shape[0]-500, data.shape[1]])
+
+idx = 0
+for i in range(500, Nsamples):
+    MAV[idx, :] = np.mean(data_abs[i-500:i, :], axis=0)
+    idx += 1
+
+pca = PCA()
+result = pca.fit(MAV)
+var = pca.explained_variance_ratio_
+
+pc = pca.components_[0:2, :]
+np.savetxt("data/pc.csv", pc, delimiter=",")
+
+plt.subplot(1, 2, 1)
+plt.plot(np.arange(1, 20), var)
+plt.ylabel('Proportion of explained variance')
+plt.xlabel('Principal component number')
+
+plt.subplot(1, 2, 2)
+plt.plot(np.arange(1, 20), np.cumsum(var))
+plt.ylabel('Proportion of explained variance')
+plt.xlabel('Principal component number')
+
+# To getter a better understanding of interaction of the dimensions
+# plot the first three PCA dimensions
+fig = plt.figure(2, figsize=(8, 6))
+ax = fig.add_subplot(111, projection="3d", elev=-150, azim=110)
+
+X_reduced = PCA(n_components=4).fit_transform(data_abs)
+ax.scatter(
+    X_reduced[:, 0],
+    X_reduced[:, 1],
+    X_reduced[:, 2],
+    c=y,
+    cmap=plt.cm.Set1,
+    edgecolor="k",
+    s=40,
+)
+
+print(X_reduced)
+print(len(X_reduced))
+
+ax.set_title("First three PCA directions")
+ax.set_xlabel("1st eigenvector")
+ax.xaxis.set_ticklabels([])
+ax.set_ylabel("2nd eigenvector")
+ax.yaxis.set_ticklabels([])
+ax.set_zlabel("3rd eigenvector")
+ax.zaxis.set_ticklabels([])
+
+plt.show()
+
