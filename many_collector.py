@@ -53,7 +53,7 @@ async def listen():
             channel = np.zeros([Nsamples, 19])
             for j in range(Nsamples):
                 channel[j, 0:16] = samples[j]['data']
-                print("Number", j, "things", samples[j]['data'])
+                # print("Number", j, "things", samples[j]['data'])
                 # channel[16, j] = samples[j]['timestamp_s']
                 channel[j, 16] = j
                 channel[j, 17] = samples[j]['timestamp_s']

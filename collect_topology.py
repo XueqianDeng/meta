@@ -17,7 +17,7 @@ import time
 import asyncio
 import random
 
-vector_number = 1
+vector_number = 0
 
 degrees = [-22.5, 22.5, 157.5, 202.5]
 name = ["vec_1", "vec_2", "vec_3", "vec_4"]

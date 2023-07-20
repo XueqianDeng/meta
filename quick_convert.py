@@ -14,7 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
 
-converter = 1
+converter = 0
 con_name = ['vec_1.csv', 'vec_2.csv', 'vec_3.csv', 'vec_4.csv']
 
 df = pd.read_csv('data/' + con_name[converter])
