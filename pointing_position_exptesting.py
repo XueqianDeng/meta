@@ -275,7 +275,7 @@ run = True
 gameTimer = core.Clock()
 one_euro_filter = OneEuroFilter(0, 0, min_cutoff=.00004, beta=.7)
 
-with open('data/pointing_linear.pkl', 'rb') as f:
+with open('data/Hokin/pointing_linear_pos_AMH.pkl', 'rb') as f:
     model = pickle.load(f)
 
 with open('data/scaling.pkl', 'rb') as f:
