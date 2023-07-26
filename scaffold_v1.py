@@ -19,8 +19,9 @@ import sys
 numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter:
-subject_name = "Hokin"
+subject_name = "Hokin3"
 data_path = "data/" + subject_name
+os.mkdir(data_path)
 run = False
 section_number = 10
 section_data_path = data_path + "/Section_Data"
@@ -101,14 +102,15 @@ async def experiment():
         raw_data.write("Batch Index" + str(batchindex) + "\n")
         raw_data.write("Batch Count" + str(batchcount) + "\n")
         raw_data.write(mdata + "\n")
-
+        print("Batch Index" + str(batchindex) + "\n")
+        print("Batch Count" + str(batchcount) + "\n")
+        print(mdata + "\n")
         # record time control
-        for this_section in range(section_number):
-            this_section_start_time = time.time()
-
+        # for this_section in range(section_number):
+        #    this_section_start_time = time.time()
             # Create Data Structure for this Section
-            this_section_data_path = section_data_path + "\section_number" + str(this_section)
-            os.mkdir(this_section_data_path)
+        #   this_section_data_path = section_data_path + "\section_number" + str(this_section)
+        #    os.mkdir(this_section_data_path)
 
 
 
