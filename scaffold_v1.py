@@ -14,6 +14,9 @@ import math
 import matplotlib.pyplot as plt
 from scipy import signal
 
+import numpy
+import sys
+numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter:
 data_path = ".."
@@ -59,8 +62,6 @@ async def listen():
             channel = np.zeros([Nsamples, 19])
             for j in range(Nsamples):
                 channel[j, 0:16] = samples[j]['data']
-                print("Number", j, "things", samples[j]['data'])
-                # channel[16, j] = samples[j]['timestamp_s']
                 channel[j, 16] = j
                 channel[j, 17] = samples[j]['timestamp_s']
                 channel[j, 18] = samples[j]['produced_timestamp_s']
@@ -94,9 +95,14 @@ async def experiment():
 
         # raw data collection
         mdata = np.array_str(data_holder[(100 - batchcount):100, :])
-        ofile.write("Batch Index" + str(batchindex) + "\n")
-        ofile.write("Batch Count" + str(batchcount) + "\n")
-        ofile.write(mdata + "\n")
+        raw_data.write("Batch Index" + str(batchindex) + "\n")
+        raw_data.write("Batch Count" + str(batchcount) + "\n")
+        raw_data.write(mdata + "\n")
+
+        # record time control
+        current_time =time.time()
+        if current_time - start_time > 5
+
 
         # synchronization
         await asyncio.sleep(0.001)
@@ -114,9 +120,10 @@ async def main():
 data_holder = np.zeros([100, 19])
 batchcount = 0
 batchindex = 0
+start_time = time.time()
 
 # setting up
-ofile = open("data/pilot_data.txt", "w")
+raw_data = open("data/pilot_data.txt", "w")
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
