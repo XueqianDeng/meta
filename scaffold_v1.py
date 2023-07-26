@@ -1,7 +1,7 @@
 from psychopy import visual, core, event, monitors  # import some libraries from PsychoPy
 from psychopy.visual import circle
 from psychopy.hardware import keyboard
-
+import os
 import numpy as np
 import pandas as pd
 import json
@@ -19,9 +19,12 @@ import sys
 numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter:
-data_path = ".."
-run = False
 subject_name = "Hokin"
+data_path = "data/" + subject_name
+run = False
+section_number = 10
+section_data_path = data_path + "/Section_Data"
+os.mkdir(section_data_path)
 
 
 # function to listen to wristband return data holder object
@@ -100,7 +103,13 @@ async def experiment():
         raw_data.write(mdata + "\n")
 
         # record time control
-        current_time = time.time()
+        for this_section in range(section_number):
+            this_section_start_time = time.time()
+
+            # Create Data Structure for this Section
+            this_section_data_path = section_data_path + "\section_number" + str(this_section)
+            os.mkdir(this_section_data_path)
+
 
 
         # synchronization
@@ -122,7 +131,8 @@ batchindex = 0
 start_time = time.time()
 
 # setting up
-raw_data = open("data/pilot_data.txt", "w")
+raw_data_path = data_path + "/raw_data.txt"
+raw_data = open(raw_data_path, "w")
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
