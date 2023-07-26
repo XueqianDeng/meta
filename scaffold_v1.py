@@ -110,8 +110,6 @@ async def main():
     await asyncio.gather(listen(), experiment())
 
 
-
-
 #  Setting global things up
 data_holder = np.zeros([100, 19])
 batchcount = 0
