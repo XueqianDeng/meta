@@ -100,8 +100,7 @@ async def experiment():
         raw_data.write(mdata + "\n")
 
         # record time control
-        current_time =time.time()
-        if current_time - start_time > 5
+        current_time = time.time()
 
 
         # synchronization
