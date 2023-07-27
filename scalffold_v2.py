@@ -18,8 +18,15 @@ import numpy
 import sys
 numpy.set_printoptions(threshold=sys.maxsize)
 
+#Note from Francis July/2023:
+#the function is runnning while getting the starting time
+#
+#
+
+
+
 ##  Hyper-parameter:
-subject_name = "Hokin8"
+subject_name = "Francis_Horizontal_5"
 data_path = "data/" + subject_name
 os.mkdir(data_path)
 run = False
@@ -27,6 +34,19 @@ section_number = 10
 section_data_path = data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
+
+#  Setting global things up
+data_holder = np.zeros([100, 19])
+batchcount = 0
+batchindex = 0
+start_time = time.time()
+
+# setting up
+raw_data_path = data_path + "/raw_data.txt"
+raw_data = open(raw_data_path, "w")
+
+asyncio.get_event_loop().run_until_complete(main())  # run wristband
+core.quit()
 
 # function to listen to wristband return data holder object
 #
@@ -47,12 +67,13 @@ async def listen():
                 }
             }
         }))  # start data stream
-
+        global testison
         global run
         result = await ws.recv()  # get rid of junk from first call to ws.recv()
 
         while run:
             result = await ws.recv()  # read data from wristband
+
             temp = json.loads(result)  # convert into readable format
             # samples is a nested list which is indexed as samples[data batch][data type]
             #   data batch: data from all channels collected at a single timepoint (timestamp_s); batch is indexed from
@@ -61,15 +82,26 @@ async def listen():
             #              'data': the raw emg data; this is further indexed by channel from 0 to 15
             #              'timestamp_s': the time at which the data batch was collected
             #              'produced_timestamp_s': I think this is the time that ws.recv() is called, but not sure
+
+
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
             channel = np.zeros([Nsamples, 19])
+
+
             for j in range(Nsamples):
                 channel[j, 0:16] = samples[j]['data']
                 channel[j, 16] = j
                 channel[j, 17] = samples[j]['timestamp_s']
                 channel[j, 18] = samples[j]['produced_timestamp_s']
                 #  end data stream from wristband
+            if testison:
+                print("TEMP this is")
+                print(temp)
+                print("Channel this is")
+                print(channel)
+            testison = False
+
 
             # transfer data
             global batchcount, batchindex
@@ -102,9 +134,9 @@ async def experiment():
         raw_data.write("Batch Index" + str(batchindex) + "\n")
         raw_data.write("Batch Count" + str(batchcount) + "\n")
         raw_data.write(mdata + "\n")
-        print("Batch Index" + str(batchindex) + "\n")
-        print("Batch Count" + str(batchcount) + "\n")
-        print(mdata + "\n")
+        #print("Batch Index" + str(batchindex) + "\n")
+        #print("Batch Count" + str(batchcount) + "\n")
+        #print(mdata + "\n")
         # record time control
         # for this_section in range(section_number):
         #    this_section_start_time = time.time()
@@ -120,21 +152,52 @@ async def experiment():
 async def extraction():
     return False;
 
+
+async def print_messages():
+    #t = 0
+    print("3 ready to OPEN")
+    await asyncio.sleep(1)
+    print("2")
+    await asyncio.sleep(1)
+    print("1, start opening")
+    await asyncio.sleep(1)
+    print("Open")
+
+    #take data for 1 s
+    await asyncio.sleep(1) #open
+    print("Rest")
+
+    await asyncio.sleep(2)
+    print("3 ready to CLOSE")
+
+    #take data now for 1s for rest
+    await asyncio.sleep(1)
+    print("2")
+
+    await asyncio.sleep(1)
+    print("1 start to closing")
+    await asyncio.sleep(1)
+    print("CLOSE")
+
+    #take data for 1s
+    await asyncio.sleep(1)
+    print("Rest")
+    await asyncio.sleep(2)
+
+
 async def main():
     global run
     run = True
-    await asyncio.gather(listen(), experiment())
+
+    global testison
+    testison = True
+
+    global initTime
+    initTime = time.time()
+    print("this is time")
+    print(initTime)
+    await asyncio.gather(listen(), experiment(),print_messages())
 
 
-#  Setting global things up
-data_holder = np.zeros([100, 19])
-batchcount = 0
-batchindex = 0
-start_time = time.time()
 
-# setting up
-raw_data_path = data_path + "/raw_data.txt"
-raw_data = open(raw_data_path, "w")
 
-asyncio.get_event_loop().run_until_complete(main())  # run wristband
-core.quit()
