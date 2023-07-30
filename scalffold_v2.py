@@ -26,7 +26,7 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 
 ##  Hyper-parameter:
-subject_name = "Francis_Horizontal_5"
+subject_name = "Francis_Horizontal_July_30_test_1"
 data_path = "data/" + subject_name
 os.mkdir(data_path)
 run = False
@@ -110,6 +110,12 @@ async def listen():
             data_holder[0:(100 - batchcount), :] = data_holder[batchcount:100, :]
             data_holder[(100 - batchcount):100, :] = channel
 
+            mdata = np.array_str(data_holder[(100 - batchcount):100, :])
+            raw_data.write("Batch Index" + str(batchindex) + "\n")
+            raw_data.write("Batch Count" + str(batchcount) + "\n")
+            raw_data.write(mdata + "\n")
+
+
         await ws.send(json.dumps({
             "api_version": "0.12",
             "api_request": {
@@ -155,34 +161,37 @@ async def extraction():
 
 async def print_messages():
     #t = 0
-    print("3 ready to OPEN")
-    await asyncio.sleep(1)
-    print("2")
-    await asyncio.sleep(1)
-    print("1, start opening")
-    await asyncio.sleep(1)
-    print("Open")
+    for section_num in range(2):
+        print(f"Section number: {section_num}")
+        print("3 ready to OPEN")
+        await asyncio.sleep(1)
+        print("2")
+        await asyncio.sleep(1)
+        print("1, start opening")
+        await asyncio.sleep(1)
+        print("Open")
 
-    #take data for 1 s
-    await asyncio.sleep(1) #open
-    print("Rest")
+        #take data for 1 s
+        await asyncio.sleep(1) #open
+        print("Rest")
 
-    await asyncio.sleep(2)
-    print("3 ready to CLOSE")
+        await asyncio.sleep(2)
+        print("3 ready to CLOSE")
 
-    #take data now for 1s for rest
-    await asyncio.sleep(1)
-    print("2")
+        #take data now for 1s for rest
+        await asyncio.sleep(1)
+        print("2")
 
-    await asyncio.sleep(1)
-    print("1 start to closing")
-    await asyncio.sleep(1)
-    print("CLOSE")
+        await asyncio.sleep(1)
+        print("1 start to closing")
+        await asyncio.sleep(1)
+        print("CLOSE")
 
-    #take data for 1s
-    await asyncio.sleep(1)
-    print("Rest")
-    await asyncio.sleep(2)
+        #take data for 1s
+        await asyncio.sleep(1)
+        print("Rest")
+        await asyncio.sleep(2)
+    core.quit()
 
 
 async def main():
@@ -196,7 +205,7 @@ async def main():
     initTime = time.time()
     print("this is time")
     print(initTime)
-    await asyncio.gather(listen(), experiment(),print_messages())
+    await asyncio.gather(listen(),print_messages())
 
 
 

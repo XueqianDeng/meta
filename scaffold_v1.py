@@ -13,14 +13,17 @@ import random
 import math
 import matplotlib.pyplot as plt
 from scipy import signal
-
+import shutil
 import numpy
 import sys
 numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter:
-subject_name = "Hokin8"
+subject_name = "scaffold_v1_francis_test_July_30_1"
 data_path = "data/" + subject_name
+if os.path.exists(data_path):
+    shutil.rmtree(data_path)
+
 os.mkdir(data_path)
 run = False
 section_number = 10
@@ -51,8 +54,15 @@ async def listen():
         global run
         result = await ws.recv()  # get rid of junk from first call to ws.recv()
 
+        batchnum = 0#test implement july 30 2023
+
         while run:
             result = await ws.recv()  # read data from wristband
+
+
+            batchnum = batchnum+1#test implement july 30 2023
+
+
             temp = json.loads(result)  # convert into readable format
             # samples is a nested list which is indexed as samples[data batch][data type]
             #   data batch: data from all channels collected at a single timepoint (timestamp_s); batch is indexed from
@@ -64,11 +74,13 @@ async def listen():
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
             channel = np.zeros([Nsamples, 19])
+            number_of_j=0#test implement july 30 2023
             for j in range(Nsamples):
                 channel[j, 0:16] = samples[j]['data']
                 channel[j, 16] = j
                 channel[j, 17] = samples[j]['timestamp_s']
                 channel[j, 18] = samples[j]['produced_timestamp_s']
+                number_of_j = j#test implement july 30 2023
                 #  end data stream from wristband
 
             # transfer data
@@ -77,6 +89,18 @@ async def listen():
             batchcount = Nsamples
             data_holder[0:(100 - batchcount), :] = data_holder[batchcount:100, :]
             data_holder[(100 - batchcount):100, :] = channel
+
+            #test implement july 30 2023
+            print("This is {}th batch and has {} data".format(batchnum,batchcount))
+            if batchnum > 1:
+                prevtime = finish_time
+                finish_time = samples[number_of_j]['produced_timestamp_s']
+                time_diff = finish_time - prevtime
+                if time_diff-(batchcount*0.0005) > 0.001:
+                    print("data lost")
+            else:
+                finish_time = samples[number_of_j]['produced_timestamp_s']
+
 
         await ws.send(json.dumps({
             "api_version": "0.12",
@@ -102,9 +126,15 @@ async def experiment():
         raw_data.write("Batch Index" + str(batchindex) + "\n")
         raw_data.write("Batch Count" + str(batchcount) + "\n")
         raw_data.write(mdata + "\n")
-        print("Batch Index" + str(batchindex) + "\n")
-        print("Batch Count" + str(batchcount) + "\n")
-        print(mdata + "\n")
+
+
+        #print("Batch Index" + str(batchindex) + "\n")
+        #print("Batch Count" + str(batchcount) + "\n")
+        #print(mdata + "\n")
+
+
+
+
         # record time control
         # for this_section in range(section_number):
         #    this_section_start_time = time.time()
