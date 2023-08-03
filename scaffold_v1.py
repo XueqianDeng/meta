@@ -83,6 +83,29 @@ async def listen():
                 number_of_j = j#test implement july 30 2023
                 #  end data stream from wristband
 
+
+
+
+            if batchnum > 1:
+                start_timeofbatch = samples[0]['timestamp_s']
+                prev_endtime = end_timeofbatch
+                time_interval = start_timeofbatch - prev_endtime
+                end_timeofbatch = samples[number_of_j]['timestamp_s']
+
+                print(f"this is the {batchnum} batch")
+                print(f"start time is {start_timeofbatch}")
+                print(f"end time is {end_timeofbatch}")
+
+
+                print(f"        the time interval is {time_interval}")
+                if time_interval > 0.0009:
+                    print("------------------data lost---------------------")
+            else:
+                start_timeofbatch = samples[0]['timestamp_s']
+                end_timeofbatch = samples[number_of_j]['timestamp_s']
+
+
+
             # transfer data
             global batchcount, batchindex
             batchindex = batchindex + 1
@@ -91,15 +114,20 @@ async def listen():
             data_holder[(100 - batchcount):100, :] = channel
 
             #test implement july 30 2023
-            print("This is {}th batch and has {} data".format(batchnum,batchcount))
-            if batchnum > 1:
-                prevtime = finish_time
-                finish_time = samples[number_of_j]['produced_timestamp_s']
-                time_diff = finish_time - prevtime
-                if time_diff-(batchcount*0.0005) > 0.001:
-                    print("data lost")
-            else:
-                finish_time = samples[number_of_j]['produced_timestamp_s']
+            #print("This is {}th batch and has {} data".format(batchnum,batchcount))
+            #if batchnum > 1:
+            #    prevtime = finish_time
+            #    finish_time = samples[number_of_j]['timestamp_s']
+            #    time_diff = finish_time - prevtime
+
+            #    print(f"        the batch number is  {batchcount}")
+            #    print(f"        the time diff is {time_diff}")
+            #    estimate_time = batchcount * 0.0005
+            #    print(f"        the estimated time is  {estimate_time}")
+            #    if time_diff-(batchcount*0.0005) > 0.001:
+            #        print("------------------data lost---------------------")
+            #else:
+            #    finish_time = samples[number_of_j]['timestamp_s']
 
 
         await ws.send(json.dumps({

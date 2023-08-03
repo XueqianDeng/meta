@@ -16,6 +16,7 @@ from scipy import signal
 
 import numpy
 import sys
+import shutil
 numpy.set_printoptions(threshold=sys.maxsize)
 
 #Note from Francis July/2023:
@@ -28,6 +29,11 @@ numpy.set_printoptions(threshold=sys.maxsize)
 ##  Hyper-parameter:
 subject_name = "Francis_Horizontal_July_30_test_1"
 data_path = "data/" + subject_name
+
+#overwrite the old file
+if os.path.exists(data_path):
+    shutil.rmtree(data_path)
+
 os.mkdir(data_path)
 run = False
 section_number = 10
