@@ -134,7 +134,7 @@ async def listen():
             #batchcount = Nsamples
 
 
-            #see the difference.
+            #see the difference...
             #if there is a difference concatinate
             concatenating = True
 
