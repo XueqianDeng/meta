@@ -58,6 +58,7 @@ async def wait_until_i_larger_than_j(i,j,t):
 async def listen():
     url = 'ws://127.0.0.1:9999'
     global listen_num
+    global concatenating
     async with websockets.connect(url) as ws:
 
         # begin data stream from wristband
@@ -103,7 +104,6 @@ async def listen():
                 #  end data stream from wristband
 
             #This section is used to test out if Listen() is missing anything
-
             if listen_num != 1:
                 batch_start_time = samples[0]['timestamp_s']
                 time_between = batch_start_time - batch_finished_time
@@ -127,11 +127,37 @@ async def listen():
 
 
             # transfer data
-            global batchcount, batchindex
+            global batchcount, batchindex, data_holder
             batchindex = batchindex + 1
-            batchcount = Nsamples
-            data_holder[0:(100 - batchcount), :] = data_holder[batchcount:100, :]
-            data_holder[(100 - batchcount):100, :] = channel
+
+            #test84 : recover these
+            #batchcount = Nsamples
+
+
+            #see the difference
+            #if there is a difference concatinate
+            concatenating = True
+
+
+            data_holder[0:(100 - Nsamples), :] = data_holder[Nsamples:100, :]
+            data_holder[(100 - Nsamples):100, :] = channel
+
+            if experiment_num < (listen_num - 1):#(it sees that experiment is too small) Also test the time for concatination
+                batchcount = batchcount + Nsamples
+                if batchcount > 60:
+                    print("--------------------Buffer larger than 60-----------------------")
+                    if batchcount > 90:
+                        print("-----------------------------------------------------------------------------")
+                        print("-----------------------------------------------------------------------------")
+                        print("-----------------------------------------------------------------------------")
+                        print("--------------------Buffer larger than 90-----------------------")
+                        print("-----------------------------------------------------------------------------")
+                        print("-----------------------------------------------------------------------------")
+                        print("-----------------------------------------------------------------------------")
+
+            else: #(normal operation)
+                batchcount = Nsamples
+            concatenating = False
             print("listen finished{}".format(listen_num))
 
 
@@ -147,11 +173,12 @@ async def listen():
         }))
 
 async def experiment():
-    global listen_num
+    global listen_num , data_holder
     global experiment_num
+    global concatenating
     global run
     while run:
-        while listen_num <= experiment_num:
+        while listen_num <= experiment_num or concatenating:
             # print("i is {}, j is {}".format(i,j))
             await asyncio.sleep(0.0005)
         experiment_num = experiment_num + 1
@@ -165,7 +192,10 @@ async def experiment():
         # raw data collection
         write_start_time = time.time()
 
+        #Test84
         mdata = np.array_str(data_holder[(100 - batchcount):100, :])
+
+
         #midtime = time.time()
         raw_data.write("Batch Index" + str(batchindex) + "\n")
         raw_data.write("Batch Count" + str(batchcount) + "\n")
@@ -263,6 +293,7 @@ async def main():
     listen_num = 0
     experiment_num = 0
 
+    global concatenating
 
     #await asyncio.gather(listen(),print_messages(),experiment())
     await asyncio.gather(listen(),experiment())
