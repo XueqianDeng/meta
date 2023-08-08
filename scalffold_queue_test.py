@@ -85,7 +85,7 @@ async def listen():
         while run:
 
             result = await ws.recv()  # read data from wristband
-            listen_num = listen_num + 1
+
             temp = json.loads(result)  # convert into readable format
             # samples is a nested list which is indexed as samples[data batch][data type]
             #   data batch: data from all channels collected at a single timepoint (timestamp_s); batch is indexed from
@@ -119,12 +119,14 @@ async def listen():
 
 
             # transfer data
-            raw_data.write(channel + "\n")
+
+
             q.put(deepcopy(channel))
-            if q.qsize > 3:
-                print("--------------------warning, q size is {}------------------------".format(q.qsize))
             listen_num = listen_num + 1
-            print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize))
+            if q.qsize() > 4:
+                print("--------------------warning, q size is {}------------------------".format(q.qsize()))
+            #print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
+            print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(),Nsamples))
 
 
 
@@ -151,6 +153,7 @@ async def experiment():
         while listen_num <= experiment_num:
             # print("i is {}, j is {}".format(i,j))
             await asyncio.sleep(0.0005)
+
         experiment_num = experiment_num + 1
         # quit button
         keys = event.getKeys(keyList=['escape'])
@@ -163,17 +166,22 @@ async def experiment():
         write_start_time = time.time()
 
         #Test84
+        while q.qsize() == 0:
+        #while listen_num == experiment_num:
+            # print("i is {}, j is {}".format(i,j))
+            await asyncio.sleep(0.0005)
         mdata = q.get()
-        print("this is mata")
-        print(mdata)
-        raw_data.write("Batch Index"+"\n")
-        raw_data.write("Batch Count" + "\n")
+        batchtestsize = len(mdata)
+        mdata = np.array_str(mdata)
+        #raw_data.write("Batch Index"+"\n")
+        #raw_data.write("Batch Count" + "\n")
         #midtime = time.time()
+
         raw_data.write(mdata + "\n")
 
 
-        print("Experiment finished {} times, queue size: {}".format(experiment_num, q.qsize))
-
+        #print("Experiment finished {} times, queue size: {}".format(experiment_num, q.qsize()))
+        print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(), batchtestsize))
         #write_end_time = time.time()
         #write_time_spent = write_end_time-write_start_time
 
@@ -257,8 +265,6 @@ async def main():
 
     global initTime
     initTime = time.time()
-    print("this is time")
-    print(initTime)
 
     global listen_num
     global experiment_num
