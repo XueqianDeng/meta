@@ -18,20 +18,21 @@ import sys
 import shutil
 import queue
 from copy import deepcopy
+
 numpy.set_printoptions(threshold=sys.maxsize)
 
-#Note from Francis Aug/2023:
-#This code is just a testing code. We changed from using self-created buffer to use queue:
-#We create a queue that deal with the problem of getting 2000hz data and store them
-#Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
-#We give experiment a time to wait so that it knows if there are elements in the queue.
+# Note from Francis Aug/2023:
+# This code is just a testing code. We changed from using self-created buffer to use queue:
+# We create a queue that deal with the problem of getting 2000hz data and store them
+# Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
+# We give experiment a time to wait so that it knows if there are elements in the queue.
 
 
 ##  Hyper-parameter:
 subject_name = "Francis_Horizontal_Aug_3_test"
 data_path = "data/" + subject_name
 
-#overwrite the old file
+# overwrite the old file
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
 
@@ -42,20 +43,20 @@ section_data_path = data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
 
-async def wait_until_i_larger_than_j(i,j,t):
-
+async def wait_until_i_larger_than_j(i, j, t):
     while i <= j:
-        #print("i is {}, j is {}".format(i,j))
+        # print("i is {}, j is {}".format(i,j))
         await asyncio.sleep(t)
+
 
 # function to listen to wristband return data holder object
 #
 async def listen():
-
-    global q
     url = 'ws://127.0.0.1:9999'
+    global q
     global listen_num
     global concatenating
+    global instruction
 
     async with websockets.connect(url) as ws:
 
@@ -78,7 +79,7 @@ async def listen():
         while run:
 
             result = await ws.recv()  # read data from wristband
-
+            instruction_curr = instruction
             temp = json.loads(result)  # convert into readable format
             # samples is a nested list which is indexed as samples[data batch][data type]
             #   data batch: data from all channels collected at a single timepoint (timestamp_s); batch is indexed from
@@ -88,20 +89,27 @@ async def listen():
             #              'timestamp_s': the time at which the data batch was collected
             #              'produced_timestamp_s': I think this is the time that ws.recv() is called, but not sure
 
-
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
-            channel = np.zeros([Nsamples, 19])
+            channel = np.zeros([Nsamples, 20])
 
 
             for j in range(Nsamples):
                 channel[j, 0:16] = samples[j]['data']
                 channel[j, 16] = j
-                channel[j, 17] = samples[j]['timestamp_s'] #signal time
-                channel[j, 18] = samples[j]['produced_timestamp_s'] # Batch time
+                channel[j, 17] = samples[j]['timestamp_s']-initTime  # signal time
+                channel[j, 18] = samples[j]['produced_timestamp_s']-initTime  # Batch time
+                channel[j, 19] = instruction_curr
                 #  end data stream from wristband
 
-            #delete later
+            if listen_num > 1:
+                batch_start_time = samples[0]['timestamp_s']
+                time_between = batch_start_time - batch_finished_time
+                if time_between > 0.0006:
+                    print("dataloss in listen")
+            batch_finished_time = samples[Nsamples - 1]['timestamp_s']
+
+            # delete later
             if testison:
                 print("TEMP this is")
                 print(temp)
@@ -114,9 +122,9 @@ async def listen():
             if q.qsize() > 4:
                 print("--------------------warning, q size is {}------------------------".format(q.qsize()))
 
-            #delete later
-            #print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
-            print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(),Nsamples))
+            # delete later
+            # print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
+            #print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(), Nsamples))
 
         await ws.send(json.dumps({
             "api_version": "0.12",
@@ -128,9 +136,10 @@ async def listen():
             }
         }))
 
+
 async def experiment():
     global q
-    global listen_num , data_holder
+    global listen_num, data_holder
     global experiment_num
     global concatenating
     global run
@@ -142,33 +151,35 @@ async def experiment():
             await asyncio.sleep(0.0005)
 
         experiment_num = experiment_num + 1
-        
+
         # quit button
         keys = event.getKeys(keyList=['escape'])
         if keys:
             core.quit()
-            
-        write_start_time = time.time()
+
+
 
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
-            
+
         mdata = q.get()
         batchtestsize = len(mdata)
         mdata = np.array_str(mdata)
-        #raw_data.write("Batch Index"+"\n")
-        #raw_data.write("Batch Count" + "\n")
-        #midtime = time.time()
+
 
         raw_data.write(mdata + "\n")
-        #delete later
-        print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(), batchtestsize))
+        # delete later
+        #print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(),
+        #                                                                     batchtestsize))
+
 
 async def extraction():
     return False;
 
+
 async def print_messages():
-    #t = 0
+    global instruction
+    # t = 0
     for section_num in range(2):
         print(f"Section number: {section_num}")
         print("3 ready to OPEN")
@@ -178,15 +189,15 @@ async def print_messages():
         print("1, start opening")
         await asyncio.sleep(1)
         print("Open")
-
-        #take data for 1 s
-        await asyncio.sleep(1) #open
+        instruction = 1
+        # take data for 1 s
+        await asyncio.sleep(1)  # open
         print("Rest")
-
+        instruction = 0
         await asyncio.sleep(2)
         print("3 ready to CLOSE")
 
-        #take data now for 1s for rest
+        # take data now for 1s for rest
         await asyncio.sleep(1)
         print("2")
 
@@ -194,16 +205,25 @@ async def print_messages():
         print("1 start to closing")
         await asyncio.sleep(1)
         print("CLOSE")
-
-        #take data for 1s
+        instruction = -1
+        # take data for 1s
         await asyncio.sleep(1)
         print("Rest")
+        instruction = 0
         await asyncio.sleep(2)
     core.quit()
+
 
 # while i is not larger than j, the system would keep waiting
 
 async def main():
+    global listen_num
+    global experiment_num
+    listen_num = 0
+    experiment_num = 0
+
+    global instruction
+    instruction = 0
 
     global q
     q = queue.Queue()
@@ -214,21 +234,16 @@ async def main():
     global testison
     testison = True
 
+
     global initTime
     initTime = time.time()
 
-    global listen_num
-    global experiment_num
-    listen_num = 0
-    experiment_num = 0
+    await asyncio.gather(listen(), print_messages(), experiment())
+    #await asyncio.gather(listen(), experiment())
 
-    global concatenating
-
-    #await asyncio.gather(listen(),print_messages(),experiment())
-    await asyncio.gather(listen(), experiment())
 
 #  Setting global things up
-start_time = time.time()
+
 
 # setting up
 raw_data_path = data_path + "/raw_data.txt"
