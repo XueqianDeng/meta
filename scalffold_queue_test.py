@@ -13,7 +13,6 @@ import random
 import math
 import matplotlib.pyplot as plt
 from scipy import signal
-
 import numpy
 import sys
 import shutil
@@ -21,15 +20,11 @@ import queue
 from copy import deepcopy
 numpy.set_printoptions(threshold=sys.maxsize)
 
-#Note from Francis July/2023:
-#the function is runnning while getting the starting time
-#
-#
-
-##Buffer Creating
-#
-#
-##
+#Note from Francis Aug/2023:
+#This code is just a testing code. We changed from using self-created buffer to use queue:
+#We create a queue that deal with the problem of getting 2000hz data and store them
+#Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
+#We give experiment a time to wait so that it knows if there are elements in the queue.
 
 
 ##  Hyper-parameter:
@@ -108,8 +103,7 @@ async def listen():
                 channel[j, 18] = samples[j]['produced_timestamp_s'] # Batch time
                 #  end data stream from wristband
 
-
-
+            #delete later
             if testison:
                 print("TEMP this is")
                 print(temp)
@@ -117,19 +111,14 @@ async def listen():
                 print(channel)
             testison = False
 
-
-            # transfer data
-
-
             q.put(deepcopy(channel))
             listen_num = listen_num + 1
             if q.qsize() > 4:
                 print("--------------------warning, q size is {}------------------------".format(q.qsize()))
+
+            #delete later
             #print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
             print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(),Nsamples))
-
-
-
 
         await ws.send(json.dumps({
             "api_version": "0.12",
@@ -155,21 +144,17 @@ async def experiment():
             await asyncio.sleep(0.0005)
 
         experiment_num = experiment_num + 1
+        
         # quit button
         keys = event.getKeys(keyList=['escape'])
         if keys:
             core.quit()
-
-
-
-        # raw data collection
+            
         write_start_time = time.time()
 
-        #Test84
         while q.qsize() == 0:
-        #while listen_num == experiment_num:
-            # print("i is {}, j is {}".format(i,j))
             await asyncio.sleep(0.0005)
+            
         mdata = q.get()
         batchtestsize = len(mdata)
         mdata = np.array_str(mdata)
@@ -178,37 +163,10 @@ async def experiment():
         #midtime = time.time()
 
         raw_data.write(mdata + "\n")
-
-
-        #print("Experiment finished {} times, queue size: {}".format(experiment_num, q.qsize()))
+        #delete later
         print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(), batchtestsize))
-        #write_end_time = time.time()
-        #write_time_spent = write_end_time-write_start_time
+ 
 
-        #if batchindex != 0:
-        #    print("midtime{}".format((midtime - write_start_time)/batchcount))
-
-        #    print("this is batch{}".format(batchindex))
-        #    print("this batch has {} index".format(batchcount))
-        #    print("total time spent{}".format(write_time_spent))
-        #    average_time = write_time_spent/batchcount
-        #    print("Average time spent{}".format(average_time))
-        #    print()
-
-        #print("Batch Index" + str(batchindex) + "\n")
-        #print("Batch Count" + str(batchcount) + "\n")
-        #print(mdata + "\n")
-        # record time control
-        # for this_section in range(section_number):
-        #    this_section_start_time = time.time()
-            # Create Data Structure for this Section
-        #   this_section_data_path = section_data_path + "\section_number" + str(this_section)
-        #    os.mkdir(this_section_data_path)
-
-
-
-        # synchronization
-        #await asyncio.sleep(0.001)
 
 async def extraction():
     return False;
