@@ -42,6 +42,12 @@ section_number = 10
 section_data_path = data_path + "/Section_" + str(section_number)
 os.mkdir(section_data_path)
 
+open_section_data_path = section_data_path + "/open/"
+rest_section_data_path = section_data_path + "/rest/"
+close_section_data_path = section_data_path + "/close/"
+os.mkdir(open_section_data_path)
+os.mkdir(rest_section_data_path)
+os.mkdir(close_section_data_path)
 
 async def wait_until_i_larger_than_j(i, j, t):
     while i <= j:
@@ -147,7 +153,6 @@ async def experiment():
     while run:
 
         while listen_num <= experiment_num:
-            # print("i is {}, j is {}".format(i,j))
             await asyncio.sleep(0.0005)
 
         experiment_num = experiment_num + 1
@@ -157,20 +162,14 @@ async def experiment():
         if keys:
             core.quit()
 
-
-
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
 
         mdata = q.get()
         batchtestsize = len(mdata)
-        mdata = np.array_str(mdata)
+        mdata_text = np.array_str(mdata_text)
 
-
-        raw_data.write(mdata + "\n")
-        # delete later
-        #print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(),
-        #                                                                     batchtestsize))
+        raw_data.write(mdata_text + "\n")
 
 
 async def extraction():
@@ -212,9 +211,6 @@ async def print_messages():
         instruction = 0
         await asyncio.sleep(2)
     core.quit()
-
-
-# while i is not larger than j, the system would keep waiting
 
 async def main():
     global listen_num
