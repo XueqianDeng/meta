@@ -235,7 +235,6 @@ async def main():
     initTime = time.time()
 
     await asyncio.gather(listen(), print_messages(), experiment())
-    #await asyncio.gather(listen(), experiment())
 
 
 #  Setting global things up
