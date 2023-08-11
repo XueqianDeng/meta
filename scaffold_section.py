@@ -179,7 +179,9 @@ async def experiment():
             time_stream[i].append(mdata[i])
 
         # dump time stream here
-        if ..
+        if len(time_stream)  > 200
+            df = pd.DataFrame(data=time_stream)
+            df.to_csv()
         
         
 
