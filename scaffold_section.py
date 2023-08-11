@@ -172,6 +172,8 @@ async def experiment():
         mdata_text = np.array_str(mdata_text)
 
         # Add csv time stream
+        for i in range(Nchannels):
+            time_stream[i].append(mdata[i])
         
 
         raw_data.write(mdata_text + "\n")
