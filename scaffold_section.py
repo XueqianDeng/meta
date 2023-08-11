@@ -29,8 +29,10 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 
 ##  Hyper-parameter:
+
 subject_name = "Francis_Horizontal_Aug_3_test"
 data_path = "data/" + subject_name
+time_stream = [[] for i in range(Nchannels)]  # time stream data of the wristband
 
 # overwrite the old file
 if os.path.exists(data_path):
@@ -245,8 +247,6 @@ async def main():
 # setting up
 raw_data_path = data_path + "/raw_data.txt"
 raw_data = open(raw_data_path, "w")
-
-time_stream = [[] for i in range(Nchannels)]  # time stream data of the wristband
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
