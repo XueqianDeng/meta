@@ -177,6 +177,10 @@ async def experiment():
         # Add csv time stream
         for i in range(Nchannels):
             time_stream[i].append(mdata[i])
+
+        # dump time stream here
+        if ..
+        
         
 
         raw_data.write(mdata_text + "\n")
