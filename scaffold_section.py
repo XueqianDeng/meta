@@ -169,7 +169,7 @@ async def experiment():
         batchtestsize = len(mdata)
         mdata_text = np.array_str(mdata_text)
 
-        # Add ".csv" data recording
+        # Add csv time stream
         
 
         raw_data.write(mdata_text + "\n")
@@ -245,6 +245,8 @@ async def main():
 # setting up
 raw_data_path = data_path + "/raw_data.txt"
 raw_data = open(raw_data_path, "w")
+
+time_stream = [[] for i in range(Nchannels)]  # time stream data of the wristband
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
