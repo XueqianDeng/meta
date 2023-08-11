@@ -169,6 +169,9 @@ async def experiment():
         batchtestsize = len(mdata)
         mdata_text = np.array_str(mdata_text)
 
+        # Add ".csv" data recording
+        
+
         raw_data.write(mdata_text + "\n")
 
 
@@ -233,7 +236,6 @@ async def main():
 
     global initTime
     initTime = time.time()
-
     await asyncio.gather(listen(), print_messages(), experiment())
 
 
