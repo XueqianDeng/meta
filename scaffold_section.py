@@ -181,9 +181,12 @@ async def experiment():
         # dump time stream here
         if len(time_stream)  > 200
             df = pd.DataFrame(data=time_stream)
-            df.to_csv()
-        
-        
+            if open_rest_close_index = 0
+                df.to_csv(open_section_data_path)
+            elif open_rest_close_index = 1
+                df.to_csv(rest_section_data_path)
+            elif open_rest_close_index = 2
+                df.to_csv(close_section_data_path)
 
         raw_data.write(mdata_text + "\n")
 
