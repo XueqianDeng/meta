@@ -39,7 +39,7 @@ if os.path.exists(data_path):
 os.mkdir(data_path)
 run = False
 section_number = 10
-section_data_path = data_path + "/Section_Data"
+section_data_path = data_path + "/Section_" + str(section_number)
 os.mkdir(section_data_path)
 
 
