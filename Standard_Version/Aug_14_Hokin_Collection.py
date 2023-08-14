@@ -26,20 +26,21 @@ numpy.set_printoptions(threshold=sys.maxsize)
 subject_name = "Hokin_Aug"
 data_path = "data/" + subject_name
 
-if os.path.exists(csv_data_path):
-    shutil.rmtree(csv_data_path)
+if os.path.exists(data_path):
+    shutil.rmtree(data_path)
 
-os.mkdir(csv_data_path)
-section_data_path = csv_data_path + "/Section_Data"
+os.mkdir(data_path)
+section_data_path = data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
-csv_raw_data_path = section_data_path + "/raw_data.csv"
+############################################################
 
 async def wait_until_i_larger_than_j(i, j, t):
     while i <= j:
         # print("i is {}, j is {}".format(i,j))
         await asyncio.sleep(t)
 
+############################################################
 
 # function to listen to wristband return data holder object
 #
@@ -80,7 +81,6 @@ async def listen():
             #              'data': the raw emg data; this is further indexed by channel from 0 to 15
             #              'timestamp_s': the time at which the data batch was collected
             #              'produced_timestamp_s': I think this is the time that ws.recv() is called, but not sure
-
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
             channel = np.zeros([Nsamples, 21])
@@ -147,11 +147,14 @@ async def experiment():
         keys = event.getKeys(keyList=['escape'])
         if keys:
             core.quit()
-
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
 
         mdata = q.get()
+
+
+
+        
         curr_instruction = mdata[0][2]
         if curr_instruction != -1:
             np_data = np.array(mdata)
@@ -160,6 +163,10 @@ async def experiment():
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
 
             df.to_csv(csv_raw_data_path,mode='a',header=False, index=False)
+
+        # move to next phase
+
+        # move to next section
 
 async def print_messages():
     global instruction
@@ -180,7 +187,6 @@ async def print_messages():
         instruction = -1
         await asyncio.sleep(2)
         print("3 ready to CLOSE")
-
         # take data now for 1s for rest
         await asyncio.sleep(1)
         print("2")
@@ -198,32 +204,22 @@ async def print_messages():
         await asyncio.sleep(2)
     core.quit()
 
-
 async def main():
     global listen_num
     global experiment_num
     listen_num = 0
     experiment_num = 0
-
     global instruction
     instruction = -1
-
     global q
     q = queue.Queue()
-
     global run
     run = True
-
     global testison
     testison = True
-
-
     global initTime
     initTime = time.time()
-
     await asyncio.gather(listen(), print_messages(), experiment())
-
-
 
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
