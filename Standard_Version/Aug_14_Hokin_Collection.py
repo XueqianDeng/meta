@@ -33,6 +33,17 @@ os.mkdir(data_path)
 section_data_path = data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
+##
+# Experiment Structure
+## 
+
+# define how many sections to collect data
+section_nums = 10 
+
+# initialize both section and phase into 0
+current_phase = 0
+current_section = 0
+
 ############################################################
 
 async def wait_until_i_larger_than_j(i, j, t):
