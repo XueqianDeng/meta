@@ -179,29 +179,19 @@ async def print_messages():
 async def main():
     global listen_num
     global experiment_num
+    global initTime
+    global instruction
+    global q
+    global run
+    global testison
     listen_num = 0
     experiment_num = 0
-
-    global instruction
     instruction = -1
-
-    global q
     q = queue.Queue()
-
-    global run
     run = True
-
-    global testison
     testison = True
-
-
-    global initTime
     initTime = time.time()
-
     await asyncio.gather(listen(), print_messages(), experiment())
-
-
-
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
