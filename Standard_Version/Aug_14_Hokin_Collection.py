@@ -179,7 +179,6 @@ async def experiment():
 
 async def print_messages():
     global instruction
-    # t = 0
     for section_num in range(2):
         print(f"Section number: {section_num}")
         print("3 ready to OPEN")
