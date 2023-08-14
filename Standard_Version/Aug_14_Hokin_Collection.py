@@ -133,8 +133,8 @@ async def experiment():
     global concatenating
     global run
     global csv_output
+    
     while run:
-
         while listen_num <= experiment_num:
             await asyncio.sleep(0.0005)
 
