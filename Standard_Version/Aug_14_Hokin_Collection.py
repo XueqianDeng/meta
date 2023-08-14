@@ -47,6 +47,14 @@ global q
 global run
 global testison
 
+
+############################################################
+
+async def wait_until_i_larger_than_j(i, j, t):
+    while i <= j:
+        # print("i is {}, j is {}".format(i,j))
+        await asyncio.sleep(t)
+        
 ############################################################
 
 # function to listen to wristband return data holder object
