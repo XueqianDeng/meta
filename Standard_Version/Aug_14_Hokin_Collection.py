@@ -135,6 +135,7 @@ async def experiment():
     global experiment_num
     global concatenating
     global run
+    global current_section
     while run:
         while listen_num <= experiment_num:
             await asyncio.sleep(0.0005)
