@@ -33,15 +33,14 @@ os.mkdir(data_path)
 ## 
 
 # define how many sections to collect data
-section_nums = 10 
+global section_nums = 10 
 
 # initialize both section and phase into 0
-current_phase = 0
-current_section = 0
+global current_phase = 0
+global current_section = 0
 
 ############################################################
 # function to listen to wristband return data holder object
-#
 async def listen():
     url = 'ws://127.0.0.1:9999'
     global q
@@ -118,22 +117,18 @@ async def experiment():
     global experiment_num
     global concatenating
     global run
-    global csv_output
     while run:
-
         while listen_num <= experiment_num:
             await asyncio.sleep(0.0005)
-
         experiment_num = experiment_num + 1
-
         # quit button
         keys = event.getKeys(keyList=['escape'])
         if keys:
             core.quit()
-
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
 
+        
         mdata = q.get()
         curr_instruction = mdata[0][2]
         if curr_instruction != -1:
@@ -141,7 +136,6 @@ async def experiment():
 
             df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
-
             df.to_csv(csv_raw_data_path,mode='a',header=False, index=False)
 
 async def print_messages():
