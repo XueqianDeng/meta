@@ -139,6 +139,9 @@ async def experiment():
 
         
         mdata = q.get()
+
+        print("Here,", np.shape(mdata))
+
         curr_instruction = mdata[0][2]
         if curr_instruction != -1:
             np_data = np.array(mdata)
@@ -150,8 +153,9 @@ async def experiment():
 async def print_messages():
     global instruction
     # t = 0
-    for section_num in range(2):
-        print(f"Section number: {section_num}")
+    _num = 0
+    while _num < section_nums:
+        print(f"Section number: {_num}")
         print("3 ready to OPEN")
         await asyncio.sleep(1)
         print("2")
@@ -200,9 +204,8 @@ async def main():
     instruction = -1
     q = queue.Queue()
     run = True
-    testison = True
+    testison = False
     initTime = time.time()
-    
 
     ## How many sections to collect, initialize here
     section_nums = 10
