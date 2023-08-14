@@ -145,7 +145,7 @@ async def experiment():
 
             df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
-            df.to_csv(csv_raw_data_path,mode='a',header=False, index=False)
+            df.to_csv(data_path,mode='a',header=False, index=False)
 
 async def print_messages():
     global instruction
