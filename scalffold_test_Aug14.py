@@ -27,21 +27,24 @@ numpy.set_printoptions(threshold=sys.maxsize)
 # Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
 # We give experiment a time to wait so that it knows if there are elements in the queue.
 
-
 ##  Hyper-parameter:
-subject_name = "Francis_Horizontal_Aug_3_test"
-data_path = "data/" + subject_name
+
+csv_subject_name = 'CSV_aug14testing.csv'
+csv_data_path = "data/" + csv_subject_name
+
+
 
 # overwrite the old file
-if os.path.exists(data_path):
-    shutil.rmtree(data_path)
 
-os.mkdir(data_path)
-run = False
-section_number = 10
-section_data_path = data_path + "/Section_Data"
+
+if os.path.exists(csv_data_path):
+    shutil.rmtree(csv_data_path)
+
+os.mkdir(csv_data_path)
+section_data_path = csv_data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
+csv_raw_data_path = section_data_path + "/raw_data.csv"
 
 async def wait_until_i_larger_than_j(i, j, t):
     while i <= j:
@@ -91,16 +94,16 @@ async def listen():
 
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
-            channel = np.zeros([Nsamples, 19])
+            channel = np.zeros([Nsamples, 21])
 
 
             for j in range(Nsamples):
-                channel[j, 0:16] = samples[j]['data']
-                channel[j, 16] = instruction_curr
-                channel[j, 17] = samples[j]['timestamp_s']-initTime  # signal time
-                channel[j, 18] = samples[j]['produced_timestamp_s']-initTime  # Batch time
-
-                #  end data stream from wristband
+                channel[j, 3:19] = samples[j]['data']
+                channel[j, 2] = instruction_curr
+                channel[j, 0] = samples[j]['timestamp_s']-initTime  # signal time
+                channel[j, 1] = samples[j]['produced_timestamp_s']-initTime  # Batch time
+                #channel[j, 19] =
+                #channel[j, 20] =
 
             if listen_num > 1:
                 batch_start_time = samples[0]['timestamp_s']
@@ -119,7 +122,7 @@ async def listen():
 
             q.put(deepcopy(channel))
             listen_num = listen_num + 1
-            if q.qsize() > 4:
+            if q.qsize() > 7:
                 print("--------------------warning, q size is {}------------------------".format(q.qsize()))
 
             # delete later
@@ -143,11 +146,10 @@ async def experiment():
     global experiment_num
     global concatenating
     global run
-
+    global csv_output
     while run:
 
         while listen_num <= experiment_num:
-            # print("i is {}, j is {}".format(i,j))
             await asyncio.sleep(0.0005)
 
         experiment_num = experiment_num + 1
@@ -157,25 +159,18 @@ async def experiment():
         if keys:
             core.quit()
 
-
-
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
 
         mdata = q.get()
-        batchtestsize = len(mdata)
-        mdata = np.array_str(mdata)
+        curr_instruction = mdata[0][2]
+        if curr_instruction != -1:
+            np_data = np.array(mdata)
 
+            df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
+                               'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
 
-        raw_data.write(mdata + "\n")
-        # delete later
-        #print("Experiment finished {} times, queue size: {}, batch size is {}".format(experiment_num, q.qsize(),
-        #                                                                     batchtestsize))
-
-
-async def extraction():
-    return False;
-
+            df.to_csv(csv_raw_data_path,mode='a',header=False, index=False)
 
 async def print_messages():
     global instruction
@@ -189,32 +184,31 @@ async def print_messages():
         print("1, start opening")
         await asyncio.sleep(1)
         print("Open")
-        instruction = 1
+        instruction = 2
         # take data for 1 s
         await asyncio.sleep(1)  # open
         print("Rest")
-        instruction = 0
+        instruction = -1
         await asyncio.sleep(2)
         print("3 ready to CLOSE")
 
         # take data now for 1s for rest
         await asyncio.sleep(1)
         print("2")
-
+        instruction = 1
         await asyncio.sleep(1)
+        instruction = -1
         print("1 start to closing")
         await asyncio.sleep(1)
         print("CLOSE")
-        instruction = -1
+        instruction = 0
         # take data for 1s
         await asyncio.sleep(1)
         print("Rest")
-        instruction = 0
+        instruction = -1
         await asyncio.sleep(2)
     core.quit()
 
-
-# while i is not larger than j, the system would keep waiting
 
 async def main():
     global listen_num
@@ -223,7 +217,7 @@ async def main():
     experiment_num = 0
 
     global instruction
-    instruction = 0
+    instruction = -1
 
     global q
     q = queue.Queue()
@@ -239,15 +233,9 @@ async def main():
     initTime = time.time()
 
     await asyncio.gather(listen(), print_messages(), experiment())
-    #await asyncio.gather(listen(), experiment())
 
 
-#  Setting global things up
 
-
-# setting up
-raw_data_path = data_path + "/raw_data.txt"
-raw_data = open(raw_data_path, "w")
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
 core.quit()
