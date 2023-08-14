@@ -21,12 +21,6 @@ from copy import deepcopy
 
 numpy.set_printoptions(threshold=sys.maxsize)
 
-# Note from Francis Aug/2023:
-# This code is just a testing code. We changed from using self-created buffer to use queue:
-# We create a queue that deal with the problem of getting 2000hz data and store them
-# Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
-# We give experiment a time to wait so that it knows if there are elements in the queue.
-
 ##  Hyper-parameter:
 
 csv_subject_name = 'CSV_aug14testing.csv'
