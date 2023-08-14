@@ -33,11 +33,11 @@ os.mkdir(data_path)
 ## 
 
 # define how many sections to collect data
-global section_nums = 10 
+global section_nums
 
 # initialize both section and phase into 0
-global current_phase = 0
-global current_section = 0
+global current_phase
+global current_section
 
 # other global variables 
 global listen_num
@@ -193,6 +193,9 @@ async def main():
     global q
     global run
     global testison
+    global section_nums
+    global current_phase
+    global current_section
     listen_num = 0
     experiment_num = 0
     instruction = -1
@@ -200,6 +203,17 @@ async def main():
     run = True
     testison = True
     initTime = time.time()
+    
+
+    ## How many sections to collect, initialize here
+    section_nums = 10
+
+    ## Initialize first phase and first section 
+    current_phase = 0
+    current_section = 0
+    # To Do: 
+
+    
     await asyncio.gather(listen(), print_messages(), experiment())
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
