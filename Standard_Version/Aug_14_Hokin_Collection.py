@@ -191,7 +191,9 @@ async def experiment():
             current_section = iterator
 
             # clean up data holder array 
-            open_data_holder = np.empty((1,23))
+            open_data_holder = np.empty((1,21))
+            rest_data_holder = np.empty((1,21))
+            close_data_holder = np.empty((1,21))
 
 
 async def print_messages():
@@ -243,6 +245,9 @@ async def main():
     global testison
     global section_nums
     global current_section
+    global open_data_holder
+    global rest_data_holder
+    global close_rest_holder
     listen_num = 0
     experiment_num = 0
     instruction = -1
@@ -256,8 +261,10 @@ async def main():
 
     ## Initialize first phase and first section 
     current_section = 0
-    # To Do: 
 
+    open_data_holder = np.empty((1,21))
+    rest_data_holder = np.empty((1,21))
+    close_data_holder = np.empty((1,21))
     
     await asyncio.gather(listen(), print_messages(), experiment())
 
