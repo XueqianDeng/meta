@@ -48,6 +48,7 @@ global run
 global testison
 
 ############################################################
+
 # function to listen to wristband return data holder object
 async def listen():
     url = 'ws://127.0.0.1:9999'
@@ -118,6 +119,7 @@ async def listen():
             }
         }))
 
+#################################################################
 
 async def experiment():
     global q
