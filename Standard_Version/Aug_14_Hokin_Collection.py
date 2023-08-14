@@ -157,14 +157,14 @@ async def experiment():
 
         # Save data
 
-        if curr_instruction = -1: 
+        if curr_instruction == -1:
             rest_data_holder = np.vstack((rest_data_holder,  mdata))
 
-        if curr_instruction = 1: 
+        if curr_instruction  == 1:
             open_data_holder = np.vstack((open_data_holder,  mdata))
 
-        if curr_instruction = 0: 
-            close = np.vstack((close_data_holder,  mdata))
+        if curr_instruction == 0:
+            close_data_holder = np.vstack((close_data_holder,  mdata))
         
         # Move Section 
         if iterator != current_section:
@@ -202,7 +202,7 @@ async def print_messages():
     global iterator 
     iterator = 0
     while iterator < section_nums:
-        print(f"Section number: {_num}")
+        print(f"Section number: {iterator}")
         print("3 ready to OPEN")
         await asyncio.sleep(1)
         print("2")
@@ -247,7 +247,7 @@ async def main():
     global current_section
     global open_data_holder
     global rest_data_holder
-    global close_rest_holder
+    global close_data_holder
     listen_num = 0
     experiment_num = 0
     instruction = -1
