@@ -91,8 +91,6 @@ async def listen():
                 channel[j, 2] = instruction_curr
                 channel[j, 0] = samples[j]['timestamp_s']-initTime  # signal time
                 channel[j, 1] = samples[j]['produced_timestamp_s']-initTime  # Batch time
-                #channel[j, 19] =
-                #channel[j, 20] =
 
             if listen_num > 1:
                 batch_start_time = samples[0]['timestamp_s']
