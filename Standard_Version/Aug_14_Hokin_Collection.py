@@ -36,7 +36,6 @@ os.mkdir(data_path)
 global section_nums
 
 # initialize both section and phase into 0
-global current_phase
 global current_section
 
 # other global variables 
