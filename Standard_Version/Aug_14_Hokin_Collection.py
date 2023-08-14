@@ -23,6 +23,9 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter:
 
+subject_name = "Hokin_Aug"
+data_path = "data/" + subject_name
+
 if os.path.exists(csv_data_path):
     shutil.rmtree(csv_data_path)
 
