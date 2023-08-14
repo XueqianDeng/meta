@@ -196,7 +196,6 @@ async def main():
     global run
     global testison
     global section_nums
-    global current_phase
     global current_section
     listen_num = 0
     experiment_num = 0
@@ -210,7 +209,6 @@ async def main():
     section_nums = 10
 
     ## Initialize first phase and first section 
-    current_phase = 0
     current_section = 0
     # To Do: 
 
