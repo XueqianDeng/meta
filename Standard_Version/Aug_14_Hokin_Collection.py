@@ -149,6 +149,8 @@ async def experiment():
 
         mdata = q.get()
 
+        print("Here", mdata)
+
 
 
         
@@ -159,63 +161,28 @@ async def experiment():
             df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
 
-            df.to_csv(csv_raw_data_path,mode='a',header=False, index=False)
+            df.to_csv(csv_raw_data_path, mode='a',header=False, index=False)
 
         # move to next phase
 
         # move to next section
 
-async def print_messages():
-    global instruction
-    for section_num in range(2):
-        print(f"Section number: {section_num}")
-        print("3 ready to OPEN")
-        await asyncio.sleep(1)
-        print("2")
-        await asyncio.sleep(1)
-        print("1, start opening")
-        await asyncio.sleep(1)
-        print("Open")
-        instruction = 2
-        # take data for 1 s
-        await asyncio.sleep(1)  # open
-        print("Rest")
-        instruction = -1
-        await asyncio.sleep(2)
-        print("3 ready to CLOSE")
-        # take data now for 1s for rest
-        await asyncio.sleep(1)
-        print("2")
-        instruction = 1
-        await asyncio.sleep(1)
-        instruction = -1
-        print("1 start to closing")
-        await asyncio.sleep(1)
-        print("CLOSE")
-        instruction = 0
-        # take data for 1s
-        await asyncio.sleep(1)
-        print("Rest")
-        instruction = -1
-        await asyncio.sleep(2)
-    core.quit()
-
 async def main():
     global listen_num
     global experiment_num
+    global instruction
+    global q
+    global run
+    global testison
+    global initTime
     listen_num = 0
     experiment_num = 0
-    global instruction
     instruction = -1
-    global q
     q = queue.Queue()
-    global run
     run = True
-    global testison
     testison = True
-    global initTime
     initTime = time.time()
-    await asyncio.gather(listen(), print_messages(), experiment())
+    await asyncio.gather(listen(), experiment())
 
 
 asyncio.get_event_loop().run_until_complete(main())  # run wristband
