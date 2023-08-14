@@ -18,34 +18,32 @@ import sys
 import shutil
 import queue
 from copy import deepcopy
-
 numpy.set_printoptions(threshold=sys.maxsize)
 
-##  Hyper-parameter:
+##  Hyper-parameter
 
-csv_subject_name = 'CSV_aug14testing.csv'
-csv_data_path = "data/" + csv_subject_name
+subject_name = "Hokin_Aug"
+data_path = "data/" + subject_name
 
+if os.path.exists(data_path):
+    shutil.rmtree(data_path)
 
-
-# overwrite the old file
-
-
-if os.path.exists(csv_data_path):
-    shutil.rmtree(csv_data_path)
-
-os.mkdir(csv_data_path)
-section_data_path = csv_data_path + "/Section_Data"
+os.mkdir(data_path)
+section_data_path = data_path + "/Section_Data"
 os.mkdir(section_data_path)
 
-csv_raw_data_path = section_data_path + "/raw_data.csv"
+##
+# Experiment Structure
+## 
 
-async def wait_until_i_larger_than_j(i, j, t):
-    while i <= j:
-        # print("i is {}, j is {}".format(i,j))
-        await asyncio.sleep(t)
+# define how many sections to collect data
+section_nums = 10 
 
+# initialize both section and phase into 0
+current_phase = 0
+current_section = 0
 
+############################################################
 # function to listen to wristband return data holder object
 #
 async def listen():
