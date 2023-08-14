@@ -152,22 +152,22 @@ async def experiment():
             core.quit()
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
-
-        
         mdata = q.get()
-
-        print("Here,", np.shape(mdata))
-
         curr_instruction = mdata[0][2]
-        if curr_instruction != -1:
-            np_data = np.array(mdata)
 
-            df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
-                               'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
-            df.to_csv(data_path,mode='a',header=False, index=False)
+        # Save data
 
+        if curr_instruction = -1: 
+            rest_data_holder = np.vstack((rest_data_holder,  mdata))
+
+        if curr_instruction = 1: 
+            open_data_holder = np.vstack((open_data_holder,  mdata))
+
+        if curr_instruction = 0: 
+            close = np.vstack((close_data_holder,  mdata))
+        
         # Move Section 
-        if iterator != current_section
+        if iterator != current_section:
 
             # Save Open Data
             open_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "/open.csv"
