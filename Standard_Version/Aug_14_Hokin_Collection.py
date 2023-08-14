@@ -113,9 +113,6 @@ async def listen():
             listen_num = listen_num + 1
             if q.qsize() > 7:
                 print("--------------------warning, q size is {}------------------------".format(q.qsize()))
-            # delete later
-            # print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
-            #print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(), Nsamples))
         await ws.send(json.dumps({
             "api_version": "0.12",
             "api_request": {
@@ -137,9 +134,7 @@ async def experiment():
     while run:
         while listen_num <= experiment_num:
             await asyncio.sleep(0.0005)
-
         experiment_num = experiment_num + 1
-
         # quit button
         keys = event.getKeys(keyList=['escape'])
         if keys:
@@ -147,20 +142,14 @@ async def experiment():
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
 
-        mdata = q.get()
-
-        print("Here", mdata)
-
-
-
         
+        mdata = q.get()
+        print("Here", mdata)
         curr_instruction = mdata[0][2]
         if curr_instruction != -1:
             np_data = np.array(mdata)
-
             df = pd.DataFrame(data = np_data, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
-
             df.to_csv(csv_raw_data_path, mode='a',header=False, index=False)
 
         # move to next phase
