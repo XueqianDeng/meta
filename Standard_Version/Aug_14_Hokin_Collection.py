@@ -47,6 +47,9 @@ global q
 global run
 global testison
 global iterator
+global open_data_holder
+global close_data_holder
+global rest_data_holder
 
 ############################################################
 
@@ -136,6 +139,9 @@ async def experiment():
     global concatenating
     global run
     global current_section
+    global open_data_holder
+    global close_data_holder
+    global rest_data_holder
     while run:
         while listen_num <= experiment_num:
             await asyncio.sleep(0.0005)
