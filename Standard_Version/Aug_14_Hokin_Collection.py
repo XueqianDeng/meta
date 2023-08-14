@@ -39,6 +39,15 @@ global section_nums = 10
 global current_phase = 0
 global current_section = 0
 
+# other global variables 
+global listen_num
+global experiment_num
+global initTime
+global instruction
+global q
+global run
+global testison
+
 ############################################################
 # function to listen to wristband return data holder object
 async def listen():
