@@ -46,7 +46,7 @@ global instruction
 global q
 global run
 global testison
-
+global iterator
 
 ############################################################
 
@@ -160,11 +160,40 @@ async def experiment():
                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
             df.to_csv(data_path,mode='a',header=False, index=False)
 
+        # Move Section 
+        if iterator != current_section
+
+            # Save Open Data
+            open_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "/open.csv"
+            df = pd.DataFrame(data = open_data_holder, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
+                               'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
+            df.to_csv(open_csv_data_path,mode='a',header=False, index=False)
+
+            # Save Close Data
+            close_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "/close.csv"
+            df = pd.DataFrame(data = close_data_holder, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
+                               'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
+            df.to_csv(close_csv_data_path,mode='a',header=False, index=False)
+
+            # Save Rest Data
+            rest_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "rest.csv"
+            df = pd.DataFrame(data = close_data_holder, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
+                                'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
+            df.to_csv(rest_csv_data_path,mode='a',header=False, index=False)
+
+            # update section number 
+            current_section = iterator
+
+            # clean up data holder array 
+            open_data_holder = np.empty((1,23))
+
+
 async def print_messages():
     global instruction
     # t = 0
-    _num = 0
-    while _num < section_nums:
+    global iterator 
+    iterator = 0
+    while iterator < section_nums:
         print(f"Section number: {_num}")
         print("3 ready to OPEN")
         await asyncio.sleep(1)
@@ -195,6 +224,7 @@ async def print_messages():
         print("Rest")
         instruction = -1
         await asyncio.sleep(2)
+        iterator = iterator + 1 
     core.quit()
 
 async def main():
