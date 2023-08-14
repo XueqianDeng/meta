@@ -61,9 +61,7 @@ async def listen():
     global listen_num
     global concatenating
     global instruction
-
     async with websockets.connect(url) as ws:
-
         # begin data stream from wristband
         await ws.send(json.dumps({
             "api_version": "0.12",
@@ -79,9 +77,7 @@ async def listen():
         global testison
         global run
         result = await ws.recv()  # get rid of junk from first call to ws.recv()
-
         while run:
-
             result = await ws.recv()  # read data from wristband
             instruction_curr = instruction
             temp = json.loads(result)  # convert into readable format
@@ -95,21 +91,17 @@ async def listen():
             samples = temp['stream_batch']['raw_emg']['samples']
             Nsamples = len(samples)
             channel = np.zeros([Nsamples, 21])
-
-
             for j in range(Nsamples):
                 channel[j, 3:19] = samples[j]['data']
                 channel[j, 2] = instruction_curr
                 channel[j, 0] = samples[j]['timestamp_s']-initTime  # signal time
                 channel[j, 1] = samples[j]['produced_timestamp_s']-initTime  # Batch time
-
             if listen_num > 1:
                 batch_start_time = samples[0]['timestamp_s']
                 time_between = batch_start_time - batch_finished_time
                 if time_between > 0.0006:
                     print("dataloss in listen")
             batch_finished_time = samples[Nsamples - 1]['timestamp_s']
-
             # delete later
             if testison:
                 print("TEMP this is")
@@ -117,16 +109,13 @@ async def listen():
                 print("Channel this is")
                 print(channel)
             testison = False
-
             q.put(deepcopy(channel))
             listen_num = listen_num + 1
             if q.qsize() > 7:
                 print("--------------------warning, q size is {}------------------------".format(q.qsize()))
-
             # delete later
             # print("Listen finished {} times, queue size: {}".format(listen_num, q.qsize()))
             #print("Listen finished {} times, queue size: {} it has {} number".format(listen_num, q.qsize(), Nsamples))
-
         await ws.send(json.dumps({
             "api_version": "0.12",
             "api_request": {
@@ -136,7 +125,6 @@ async def listen():
                 }
             }
         }))
-
 
 async def experiment():
     global q
