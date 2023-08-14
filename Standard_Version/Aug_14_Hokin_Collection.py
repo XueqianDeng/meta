@@ -166,7 +166,6 @@ async def print_messages():
         instruction = -1
         await asyncio.sleep(2)
         print("3 ready to CLOSE")
-
         # take data now for 1s for rest
         await asyncio.sleep(1)
         print("2")
