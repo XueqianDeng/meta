@@ -20,26 +20,33 @@ import queue
 from copy import deepcopy
 numpy.set_printoptions(threshold=sys.maxsize)
 
-#Note from Francis Aug/2023:
-#This code is just a testing code. We changed from using self-created buffer to use queue:
-#We create a queue that deal with the problem of getting 2000hz data and store them
-#Listen will get the data and put them into queue, and experiment gets element in queue and write it into file.
-#We give experiment a time to wait so that it knows if there are elements in the queue.
-
-
-##  Hyper-parameter:
-subject_name = "Francis_Horizontal_Aug_3_test"
+##  Hyper-parameter
+subject_name = "Hokin_Aug"
 data_path = "data/" + subject_name
-
-#overwrite the old file
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
-
 os.mkdir(data_path)
-run = False
-section_number = 10
-section_data_path = data_path + "/Section_Data"
-os.mkdir(section_data_path)
+
+##
+# Experiment Structure
+## 
+
+# define how many sections to collect data
+section_nums = 10 
+
+# initialize both section and phase into 0
+global current_phase = 0
+global current_section = 0
+
+############################################################
+
+async def wait_until_i_larger_than_j(i, j, t):
+    while i <= j:
+        # print("i is {}, j is {}".format(i,j))
+        await asyncio.sleep(t)
+
+############################################################
+
 
 
 async def wait_until_i_larger_than_j(i,j,t):
