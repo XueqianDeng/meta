@@ -21,7 +21,7 @@ from copy import deepcopy
 
 numpy.set_printoptions(threshold=sys.maxsize)
 
-##  Hyper-parameter:
+##  Hyper-parameter
 
 subject_name = "Hokin_Aug"
 data_path = "data/" + subject_name
