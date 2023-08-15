@@ -160,7 +160,7 @@ async def experiment():
         if curr_instruction == -1:
             rest_data_holder = np.vstack((rest_data_holder,  mdata))
 
-        if curr_instruction  == 1:
+        if curr_instruction == 1:
             open_data_holder = np.vstack((open_data_holder,  mdata))
 
         if curr_instruction == 0:
