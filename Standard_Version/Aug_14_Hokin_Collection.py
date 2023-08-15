@@ -22,7 +22,7 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter
 
-subject_name = "Hokin"
+subject_name = "Francis"
 data_path = "data/" + subject_name
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
@@ -99,10 +99,10 @@ async def listen():
             Nsamples = len(samples)
             channel = np.zeros([Nsamples, 21])
             for j in range(Nsamples):
-                channel[j, 3:19] = samples[j]['data']
-                channel[j, 2] = instruction_curr
-                channel[j, 0] = samples[j]['timestamp_s']-initTime  # signal time
-                channel[j, 1] = samples[j]['produced_timestamp_s']-initTime  # Batch time
+                channel[j, 0:16] = samples[j]['data']
+                channel[j, 16] = instruction_curr
+                channel[j, 17] = samples[j]['timestamp_s']-initTime  # signal time
+                channel[j, 18] = samples[j]['produced_timestamp_s']-initTime  # Batch time
             if listen_num > 1:
                 batch_start_time = samples[0]['timestamp_s']
                 time_between = batch_start_time - batch_finished_time
@@ -153,14 +153,14 @@ async def experiment():
         while q.qsize() == 0:
             await asyncio.sleep(0.0005)
         mdata = q.get()
-        curr_instruction = mdata[0][2]
+        curr_instruction = mdata[0][16]
 
         # Save data
 
-        if curr_instruction == -1:
+        if curr_instruction == 1:
             rest_data_holder = np.vstack((rest_data_holder,  mdata))
 
-        if curr_instruction == 1:
+        if curr_instruction == 2:
             open_data_holder = np.vstack((open_data_holder,  mdata))
 
         if curr_instruction == 0:
