@@ -22,7 +22,7 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter
 
-subject_name = "Hokin_Aug"
+subject_name = "Hokin"
 data_path = "data/" + subject_name
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
@@ -189,7 +189,7 @@ async def experiment():
             df.to_csv(close_csv_data_path,mode='a',header=False, index=False)
 
             # Save Rest Data
-            rest_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "rest.csv"
+            rest_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "/rest.csv"
             df = pd.DataFrame(data = rest_data_holder, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
                                 'C13', 'C14', 'C15', 'C16', 'Instruction', 'Signal_Time', 'Batch_time','X','Y'])
             df.to_csv(rest_csv_data_path,mode='a',header=False, index=False)
@@ -264,7 +264,7 @@ async def main():
     initTime = time.time()
 
     ## How many sections to collect, initialize here
-    section_nums = 10
+    section_nums = 5
 
     ## Initialize first phase and first section 
     current_section = 0
