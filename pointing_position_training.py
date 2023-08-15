@@ -57,7 +57,6 @@ print(y)
 with open('data/' + subject + '/pointing_linear_pos_AMH.pkl', 'wb') as f:
     pickle.dump(linear, f)
 
-
 # plot the results of fitting the model to training data
 plt.figure(figsize=(12, 6))
 plt.subplot(2, 1, 1)
