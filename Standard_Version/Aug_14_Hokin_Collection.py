@@ -169,6 +169,13 @@ async def experiment():
         # Move Section 
         if iterator != current_section:
 
+            # Make Section directory first. 
+
+            section_path = data_path + "/Section_Number_" + str(current_section)
+            if os.path.exists(section_path):
+                shutil.rmtree(section_path)
+            os.mkdir(section_path)
+
             # Save Open Data
             open_csv_data_path = data_path + "/Section_Number_" + str(current_section) + "/open.csv"
             df = pd.DataFrame(data = open_data_holder, columns = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
