@@ -219,23 +219,26 @@ async def print_messages():
         print("Open")
         instruction = 2
         # take data for 1 s
-        await asyncio.sleep(10)  # open
+        await asyncio.sleep(8)  # open
         print("Rest")
         instruction = -1
-        await asyncio.sleep(2)
+
+
+        await asyncio.sleep(1)
+        instruction = 1
+        await asyncio.sleep(8)
+        instruction = -1
         print("3 ready to CLOSE")
         # take data now for 1s for rest
         await asyncio.sleep(1)
         print("2")
-        instruction = 1
-        await asyncio.sleep(10)
-        instruction = -1
+        await asyncio.sleep(1)
         print("1 start to closing")
         await asyncio.sleep(1)
         print("CLOSE")
         instruction = 0
         # take data for 1s
-        await asyncio.sleep(10)
+        await asyncio.sleep(8)
         print("Rest")
         instruction = -1
         await asyncio.sleep(2)
@@ -264,7 +267,7 @@ async def main():
     initTime = time.time()
 
     ## How many sections to collect, initialize here
-    section_nums = 3
+    section_nums = 4
 
     ## Initialize first phase and first section 
     current_section = 0
