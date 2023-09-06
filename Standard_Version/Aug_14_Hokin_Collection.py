@@ -22,7 +22,7 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter
 
-subject_name = "FrancisAug17_long_test"
+subject_name = "Francis_sep_6_long_test"
 data_path = "data/" + subject_name
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
@@ -203,6 +203,10 @@ async def experiment():
             close_data_holder = np.empty((1,21))
 
 
+
+# The screen prints out instructions on how to move. The functions gets data by changing the  variable "instruction"
+# -1 means no data should be collected
+# 0 means close, 1 means rest, 2 means open
 async def print_messages():
     global instruction
     # t = 0
@@ -222,8 +226,6 @@ async def print_messages():
         await asyncio.sleep(8)  # open
         print("Rest")
         instruction = -1
-
-
         await asyncio.sleep(1)
         instruction = 1
         await asyncio.sleep(8)
