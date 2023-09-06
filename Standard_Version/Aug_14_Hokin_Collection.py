@@ -22,7 +22,7 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 ##  Hyper-parameter
 
-subject_name = "Francis"
+subject_name = "FrancisAug17_long_test"
 data_path = "data/" + subject_name
 if os.path.exists(data_path):
     shutil.rmtree(data_path)
@@ -219,7 +219,7 @@ async def print_messages():
         print("Open")
         instruction = 2
         # take data for 1 s
-        await asyncio.sleep(1)  # open
+        await asyncio.sleep(10)  # open
         print("Rest")
         instruction = -1
         await asyncio.sleep(2)
@@ -228,14 +228,14 @@ async def print_messages():
         await asyncio.sleep(1)
         print("2")
         instruction = 1
-        await asyncio.sleep(1)
+        await asyncio.sleep(10)
         instruction = -1
         print("1 start to closing")
         await asyncio.sleep(1)
         print("CLOSE")
         instruction = 0
         # take data for 1s
-        await asyncio.sleep(1)
+        await asyncio.sleep(10)
         print("Rest")
         instruction = -1
         await asyncio.sleep(2)
@@ -264,7 +264,7 @@ async def main():
     initTime = time.time()
 
     ## How many sections to collect, initialize here
-    section_nums = 5
+    section_nums = 3
 
     ## Initialize first phase and first section 
     current_section = 0
